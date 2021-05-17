@@ -1,26 +1,50 @@
 import './index.css';
 import React, { useState, useEffect } from 'react';
 import Article from '../Article';
+import { withFirebase } from '../Firebase';
 
-function ArticleGetter() { 
+function ArticleGetter(props) { 
 	const [articleList, setArticleList] = useState([]);
 	const [currKeyword, setCurrKeyword] = useState("");
+	const [currUserCount, setCurrUserCount] = useState(0);
 
 	const doStuff = (event) => {
 		if (currKeyword !== "") {
-			console.log("fetching");
+			console.log(currKeyword);
+			var currUser = props.firebase.auth.currentUser;
+			var currUserId = currUser.uid;
+			
+			var userRef = props.firebase.db.ref("users/" + currUserId);
+			var userListRef = props.firebase.db.ref("users/" + currUserId + "/searchList");
+
+			userRef.once("value", (snapshot) => {
+    			var userData = snapshot.val();
+    			setCurrUserCount(userData["searchCount"]);
+				console.log(currUserCount);
+			});
+
+			userListRef.push(currKeyword);
+			userRef.update({"searchCount": currUserCount + 1});
+
+			if (currUserCount >= 10) {
+				userRef.update({"searchCount": currUserCount - 1});
+				var query = userListRef.orderByKey();
+				query.once("value", (snapshot) => {
+
+    				var userData = snapshot.val();
+					console.log(userData);
+					const keyToRemove = Object.keys(userData)[1];
+					console.log("keys: " + Object.keys(userData));
+					console.log(keyToRemove);
+					userListRef.child(keyToRemove).remove();
+
+				});
+			}
+
 			fetch("/getArticles/" + currKeyword)
   				.then(response => response.json())
   				.then(data => updateState(data));
-
-			//fetch("/getArticles/" + currKeyword).then(response => console.log(response.text()));
-
-			//fetch("/getArticles/" + currKeyword).then(function(response) {
-    		//	return response.json().then(function(data) {
-			//		console.log(typeof(response)); //Make a bunch of components
-      	//		updateState(JSON.parse(JSON.stringify(data)));
-    		//	});
-  			//});
+			
 		}
 	}
 
@@ -80,4 +104,4 @@ function ArticleGetter() {
 	);	
 }
 
-export default ArticleGetter;
+export default withFirebase(ArticleGetter);
