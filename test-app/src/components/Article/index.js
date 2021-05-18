@@ -1,10 +1,42 @@
 import './index.css';
 import React, { useState, useEffect } from 'react';
+import { withFirebase } from '../Firebase';
 
 function Article(props) {
+	const [currUserCount, setCurrUserCount] = useState(0);
+
 	const getUrl = () => {
 		//console.log(props);
 		return props.url;
+	}
+
+	const handleClick = (e) => {
+		var currUser = props.firebase.auth.currentUser;
+		var currUserId = currUser.uid;
+		var userRef = props.firebase.db.ref("users/" + currUserId);
+		var userListRef = props.firebase.db.ref("users/" + currUserId + "/readList");
+
+		userRef.once("value", (snapshot) => {
+    		var userData = snapshot.val();
+    		setCurrUserCount(userData["readCount"]);
+			console.log(currUserCount);
+		});
+
+		userListRef.push(getUrl());
+		userRef.update({"readCount": currUserCount + 1});
+
+		if (currUserCount >= 10) {
+			userRef.update({"readCount": currUserCount});
+			var query = userListRef.orderByKey();
+			query.once("value", (snapshot) => {
+    				var userData = snapshot.val();
+					console.log(userData);
+					const keyToRemove = Object.keys(userData)[1];
+					console.log("keys: " + Object.keys(userData));
+					console.log(keyToRemove);
+					userListRef.child(keyToRemove).remove();
+			});
+		}
 	}
 
 	return (
@@ -16,10 +48,10 @@ function Article(props) {
 				<p><b>{props.name}</b></p>
 				<p><i>{props.provider}  --  {props.date}, {props.time}</i></p>
 				<p>{props.description.concat("...")}</p>
-				<a href={getUrl()} target="_blank">Read</a>
+				<a href={getUrl()} target="_blank" onClick={handleClick}>Read</a>
 			</div>
 		</div>
 	)
 }
 
-export default Article;
+export default withFirebase(Article);

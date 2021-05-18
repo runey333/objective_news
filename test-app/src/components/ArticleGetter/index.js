@@ -27,7 +27,7 @@ function ArticleGetter(props) {
 			userRef.update({"searchCount": currUserCount + 1});
 
 			if (currUserCount >= 10) {
-				userRef.update({"searchCount": currUserCount - 1});
+				userRef.update({"searchCount": currUserCount});
 				var query = userListRef.orderByKey();
 				query.once("value", (snapshot) => {
 
