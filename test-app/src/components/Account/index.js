@@ -59,12 +59,12 @@ function AccountPage(props) {
       		</div>
     		)}
   			</AuthUserContext.Consumer>
-			<div>
-				<div>
+			<div id="history">
+				<div id="search">
   					<h3> Search History </h3>
   					<ul>{searchListItems}</ul>
 				</div>
-				<div>
+				<div id="read">
 					<h3> Reading History </h3>
 					<ul>{readListItems}</ul>
 				</div>
