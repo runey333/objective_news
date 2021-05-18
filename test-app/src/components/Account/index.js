@@ -10,24 +10,26 @@ import { withFirebase } from '../Firebase';
 
 function AccountPage(props) {
 	const [userSearchList, setUserSearchList] = useState([]);
+	const [userReadList, setUserReadList] = useState([]);
 
 	var currUser = props.firebase.auth.currentUser;
 	var currUserId = currUser.uid;
 	var userRef = props.firebase.db.ref("users/" + currUserId);
 	var userListRef = props.firebase.db.ref("users/" + currUserId + "/searchList");
+	var userReadListRef = props.firebase.db.ref("users/" + currUserId + "/readList");
 
-	const getList = () => {
+	const getList = (listRef, stateFunc, stateVar) => {
 		var temp = [];
-		var query = userListRef.orderByKey();
+		var query = listRef.orderByKey();
 		query.once("value").then(function(snapshot) {
 			snapshot.forEach(function(childSnapshot) {
       		var key = childSnapshot.key;
       		var childData = childSnapshot.val();
 				if (childData != "dummy") {
 					//temp.push(childData);
-					temp = userSearchList;
+					temp = stateVar;
 					temp.push(childData);
-					setUserSearchList([...temp]);
+					stateFunc([...temp]);
 				}
   			});
 		});
@@ -35,10 +37,15 @@ function AccountPage(props) {
 		console.log(userSearchList.length);
 	}
 
-	useEffect(getList, []);
+	useEffect(() => getList(userListRef, setUserSearchList, userSearchList), []);
+	useEffect(() => getList(userReadListRef, setUserReadList, userReadList), []);
 
-	const listItems = userSearchList.map((number) =>
+	const searchListItems = userSearchList.map((number) =>
   		<li>{number}</li>
+	);
+
+	const readListItems = userReadList.map((number) =>
+  		<li><a href={number}>{number}</a></li>
 	);
 
 	return (
@@ -52,8 +59,16 @@ function AccountPage(props) {
       		</div>
     		)}
   			</AuthUserContext.Consumer>
-  			<h3> Search History </h3>
-  			<ul>{listItems}</ul>
+			<div>
+				<div>
+  					<h3> Search History </h3>
+  					<ul>{searchListItems}</ul>
+				</div>
+				<div>
+					<h3> Reading History </h3>
+					<ul>{readListItems}</ul>
+				</div>
+			</div>
   		</div>
 	);
 }
