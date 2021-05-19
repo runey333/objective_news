@@ -3,6 +3,11 @@ import React, { useState, useEffect } from 'react';
 import Article from '../Article';
 import { withFirebase } from '../Firebase';
 
+import * as ROUTES from '../../constants/routes';
+import { AuthUserContext } from '../Session';
+import { Link } from 'react-router-dom';
+import SignOutButton from '../SignOut';
+
 function ArticleGetter(props) { 
 	const [articleList, setArticleList] = useState([]);
 	const [currKeyword, setCurrKeyword] = useState("");
@@ -48,6 +53,14 @@ function ArticleGetter(props) {
 		}
 	}
 
+	const doStuffNoAuth = (event) => {
+		if (currKeyword !== "") {
+			fetch("/getArticles/" + currKeyword)
+  				.then(response => response.json())
+  				.then(data => updateState(data));
+		}
+	}
+
 	const updateState = (newStateVar) => {
 		console.log("updating");
 		console.log(newStateVar);
@@ -89,7 +102,23 @@ function ArticleGetter(props) {
 		console.log(currKeyword);
 	}
 
-	return (
+	const checkIfSearchIsValid = () => {
+		//if signed in return true
+
+		//else
+
+			//get ip address
+
+			//check if ip is stored
+
+			//if yes and more than 5 searches return false
+
+			//if yes and less than 5 searches return true
+
+			//if no add to database and return true
+	}
+
+	const ArticleGetterAuth = () => (
 		<div className="App">
 			<form>
 				<input id="keywordInputBox" type="text" name="keyword" value={currKeyword} onChange={updateCurrKey}/>
@@ -101,6 +130,34 @@ function ArticleGetter(props) {
       		))}
 			</div>
 		</div>
+	); 
+
+	const ArticleGetterNoAuth = () => (
+		<div className="App">
+			<form>
+				<input id="keywordInputBox" type="text" name="keyword" value={currKeyword} onChange={updateCurrKey}/>
+         	<input type="button" value="Get Articles" onClick={doStuffNoAuth}/>
+			</form>
+      	<div id="all_articles">
+				{articleList.map((article) => (
+        			<Article src={article[2]} name={article[0]} description={article[3]} url={article[1]} provider={article[4]} date={article[5]} time={article[6]}/>
+      		))}
+			</div>
+		</div>
+	); 
+
+	const ArticleGetterOutOfSearches = () => (
+		<div>
+			<h3>You are out of searches. Please sign in or sign up.</h3>
+		</div>
+	);
+
+	return (
+		<div>
+    		<AuthUserContext.Consumer>
+      		{authUser => authUser ? <ArticleGetterAuth /> : <ArticleGetterOutOfSearches />}
+    		</AuthUserContext.Consumer>
+  		</div>
 	);	
 }
 

@@ -2,6 +2,11 @@ import './index.css';
 import React, { useState, useEffect } from 'react';
 import { withFirebase } from '../Firebase';
 
+import * as ROUTES from '../../constants/routes';
+import { AuthUserContext } from '../Session';
+import { Link } from 'react-router-dom';
+import SignOutButton from '../SignOut';
+
 function Article(props) {
 	const [currUserCount, setCurrUserCount] = useState(0);
 
@@ -51,7 +56,7 @@ function Article(props) {
 				<a href={getUrl()} target="_blank" onClick={handleClick}>Read</a>
 			</div>
 		</div>
-	)
+	);
 }
 
 export default withFirebase(Article);
