@@ -120,6 +120,15 @@ function ArticleGetter(props) {
 		if (authUser) {
 			return  <ArticleGetterAuth/>;
 		} else {
+			var r = props.firebase.fs.doc("non_auth_ids/dummy_ip");
+			r.get().then((doc) => {
+					if (doc.exists) {
+						console.log(doc.data());
+					} else {
+						console.log("doc not found");
+					}
+				}
+			);
 			return <ArticleGetterOutOfSearches/>;
 		}
 	}
