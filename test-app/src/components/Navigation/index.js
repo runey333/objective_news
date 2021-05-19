@@ -21,12 +21,6 @@ const NavigationAuth = () => (
 	<div>
 		<ul class="nav">
     		<li>
-      		<Link to={ROUTES.LANDING}>Landing</Link>
-    		</li>
-			<li>
-				<b>   |   </b>
-			</li>
-    		<li>
       		<Link to={ROUTES.HOME}>Home</Link>
     		</li>
 			<li>
