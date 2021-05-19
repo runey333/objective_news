@@ -102,8 +102,8 @@ function ArticleGetter(props) {
 		console.log(currKeyword);
 	}
 
-	const checkIfSearchIsValid = () => {
-		//if signed in return true
+	const checkIfSearchIsValid = (authUser) => {
+		//if signed in return ArticleGetterAuth
 
 		//else
 
@@ -111,11 +111,17 @@ function ArticleGetter(props) {
 
 			//check if ip is stored
 
-			//if yes and more than 5 searches return false
+			//if yes and more than 5 searches return ArticleGetterOutOfSearches
 
-			//if yes and less than 5 searches return true
+			//if yes and less than 5 searches return ArticleGetterNoAuth
 
-			//if no add to database and return true
+			//if no add to database and return ArticleGetterNoAuth
+
+		if (authUser) {
+			return  <ArticleGetterAuth/>;
+		} else {
+			return <ArticleGetterOutOfSearches/>;
+		}
 	}
 
 	const ArticleGetterAuth = () => (
@@ -155,7 +161,7 @@ function ArticleGetter(props) {
 	return (
 		<div>
     		<AuthUserContext.Consumer>
-      		{authUser => authUser ? <ArticleGetterAuth /> : <ArticleGetterOutOfSearches />}
+      		{authUser => checkIfSearchIsValid(authUser)}
     		</AuthUserContext.Consumer>
   		</div>
 	);	

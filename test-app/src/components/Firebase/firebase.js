@@ -1,6 +1,7 @@
 import app from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
+import 'firebase/firestore';
 
 const config = {
   apiKey: "AIzaSyB4zlKazEyS3t_0sDTUyuq2trfW0lDrH_A",
@@ -19,6 +20,7 @@ class Firebase {
 
     this.auth = app.auth();
     this.db = app.database();
+	 this.fs = app.firestore();
   }
 
   // *** Auth API ***
@@ -41,6 +43,9 @@ class Firebase {
   user = uid => this.db.ref(`users/${uid}`);
 
   users = () => this.db.ref('users');
+
+  // Firestore
+  addDoc = (docData) => this.fs.collection("non_auth_ids").add(docData);
 }
 
 export default Firebase;
