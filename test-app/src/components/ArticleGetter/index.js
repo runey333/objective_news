@@ -12,6 +12,8 @@ function ArticleGetter(props) {
 	const [articleList, setArticleList] = useState([]);
 	const [currKeyword, setCurrKeyword] = useState("");
 	const [currUserCount, setCurrUserCount] = useState(0);
+	const [currIp, setCurrIp] = useState("");
+	const [currSearches, setCurrSearches] = useState("");
 
 	const doStuff = (event) => {
 		if (currKeyword !== "") {
@@ -55,6 +57,13 @@ function ArticleGetter(props) {
 
 	const doStuffNoAuth = (event) => {
 		if (currKeyword !== "") {
+			//increase search count
+			var docRef = props.firebase.fs.collection("non_auth_ids").doc(currIp);
+			docRef.get().then((doc) => {
+				var ip_searches = doc.data()["searchCount"];
+				docRef.set({"searchCount" : ip_searches + 1});
+			});
+
 			fetch("/getArticles/" + currKeyword)
   				.then(response => response.json())
   				.then(data => updateState(data));
@@ -102,40 +111,56 @@ function ArticleGetter(props) {
 		console.log(currKeyword);
 	}
 
-	const checkIfSearchIsValid = (authUser) => {
-		//if signed in return ArticleGetterAuth
 
-		//else
-
-			//get ip address
-
-			//check if ip is stored
-
-			//if yes and more than 5 searches return ArticleGetterOutOfSearches
-
-			//if yes and less than 5 searches return ArticleGetterNoAuth
-
-			//if no add to database and return ArticleGetterNoAuth
-
-		if (authUser) {
-			return  <ArticleGetterAuth/>;
-		} else {
-			var r = props.firebase.fs.doc("non_auth_ids/dummy_ip");
-			r.get().then((doc) => {
+	const setSearchState = (user_ip) => {
+		setCurrIp(user_ip);
+		var docRef = props.firebase.fs.collection("non_auth_ids").doc(user_ip);
+		docRef.get().then((doc) => {
 					if (doc.exists) {
-						console.log(doc.data());
-					} else {
+						var ip_searches = doc.data()["searchCount"];
+
+						//if yes and >= 5 searches return ArticleGetterOutOfSearches
+						if (ip_searches >= 5) {
+							setCurrSearches("out");
+							console.log(currSearches);
+							//return <ArticleGetterOutOfSearches/>;
+						} else { //if yes and < 5 searches return ArticleGetterNoAuth
+							setCurrSearches("remain");
+							console.log(currSearches);
+							//return <ArticleGetterNoAuth/>;
+						}
+					} else { //if no add to database and return ArticleGetterNoAuth
 						console.log("doc not found");
+						props.firebase.fs.collection("non_auth_ids").doc(user_ip).set({"address":user_ip, "searchCount":0});
+						setCurrSearches("remain");
+						console.log(currSearches);
+						//return <ArticleGetterNoAuth/>;
 					}
 				}
 			);
-			return <ArticleGetterOutOfSearches/>;
+	}
+
+	const checkIfSearchIsValid = (authUser) => {
+		//if signed in return ArticleGetterAuth
+		if (authUser) {
+			return ArticleGetterAuth();
+		} else {
+			fetch("https://geolocation-db.com/json/e4f42070-ad2d-11eb-adf1-cf51da9b3410")
+				.then(response => response.json())
+				.then(data => data["IPv4"])
+				.then(ip => setSearchState(ip));
+			
+			if (currSearches == "out") {
+				return ArticleGetterOutOfSearches();
+			} else {
+				return ArticleGetterNoAuth();
+			}
 		}
 	}
 
 	const ArticleGetterAuth = () => (
 		<div className="App">
-			<form>
+			<form key="searchBox">
 				<input id="keywordInputBox" type="text" name="keyword" value={currKeyword} onChange={updateCurrKey}/>
          	<input type="button" value="Get Articles" onClick={doStuff}/>
 			</form>
@@ -149,7 +174,7 @@ function ArticleGetter(props) {
 
 	const ArticleGetterNoAuth = () => (
 		<div className="App">
-			<form>
+			<form key="searchBox">
 				<input id="keywordInputBox" type="text" name="keyword" value={currKeyword} onChange={updateCurrKey}/>
          	<input type="button" value="Get Articles" onClick={doStuffNoAuth}/>
 			</form>
