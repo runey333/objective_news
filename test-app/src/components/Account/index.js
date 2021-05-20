@@ -48,6 +48,22 @@ function AccountPage(props) {
   		<li><a href={number}>{number}</a></li>
 	);
 
+	const deleteAccount = () => {
+		currUser.delete().then(function() {
+  			// User deleted.
+		}).catch(function(error) {
+  			// An error happened.
+		});
+
+		userRef.remove().then(function() {
+    		
+  		}).catch(function(error) {
+    		
+  		});
+		
+		props.firebase.doSignOut();
+	}
+
 	return (
   		<div>
 			<AuthUserContext.Consumer>
@@ -68,6 +84,9 @@ function AccountPage(props) {
 					<h3> Reading History </h3>
 					<ul>{readListItems}</ul>
 				</div>
+			</div>
+			<div>
+				<input type="button" value="Delete Account" onClick={deleteAccount}/>
 			</div>
   		</div>
 	);
