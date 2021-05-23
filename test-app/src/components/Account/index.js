@@ -7,6 +7,7 @@ import { withAuthorization } from '../Session';
 import { useState, useEffect } from 'react';
 
 import { withFirebase } from '../Firebase';
+import './index.css';
 
 function AccountPage(props) {
 	const [userSearchList, setUserSearchList] = useState([]);
@@ -65,11 +66,12 @@ function AccountPage(props) {
 	}
 
 	return (
-  		<div>
+  		<div id="accountDiv">
 			<AuthUserContext.Consumer>
     		{authUser => (
       		<div>
         			<h1>Account: {authUser.email}</h1>
+					<h3>Reset Password</h3>
         			<PasswordForgetForm />
         			<PasswordChangeForm />
       		</div>

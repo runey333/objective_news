@@ -160,7 +160,7 @@ function ArticleGetter(props) {
 
 	const ArticleGetterAuth = () => (
 		<div className="App">
-			<form key="searchBox">
+			<form key="searchBox" id="searchForm">
 				<input id="keywordInputBox" type="text" name="keyword" value={currKeyword} onChange={updateCurrKey}/>
          	<input type="button" value="Get Articles" onClick={doStuff}/>
 			</form>
@@ -174,7 +174,7 @@ function ArticleGetter(props) {
 
 	const ArticleGetterNoAuth = () => (
 		<div className="App">
-			<form key="searchBox">
+			<form key="searchBox" id="searchForm">
 				<input id="keywordInputBox" type="text" name="keyword" value={currKeyword} onChange={updateCurrKey}/>
          	<input type="button" value="Get Articles" onClick={doStuffNoAuth}/>
 			</form>
@@ -187,7 +187,7 @@ function ArticleGetter(props) {
 	); 
 
 	const ArticleGetterOutOfSearches = () => (
-		<div>
+		<div id="outOfSearches">
 			<h3>You are out of searches. Please sign in or sign up.</h3>
 		</div>
 	);

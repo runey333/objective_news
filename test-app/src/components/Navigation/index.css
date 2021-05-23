@@ -1,3 +1,12 @@
 .nav li{
 	display: inline;
 }
+
+.nav {
+	padding-left: 50px;
+}
+
+#rightFloat {
+	float: right;
+	padding-right: 50px;
+}

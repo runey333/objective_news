@@ -7,9 +7,11 @@ import { PasswordForgetLink } from '../PasswordForget';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 
+import './index.css';
+
 const SignInPage = () => (
-  <div>
-    <h1>SignIn</h1>
+  <div id="signIn">
+    <h1>Sign In</h1>
     <SignInForm />
     <PasswordForgetLink />
     <SignUpLink />

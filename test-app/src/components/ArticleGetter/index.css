@@ -19,3 +19,12 @@
 .img_div {
 	display: inline-block;
 }
+
+#searchForm {
+	padding-left: 50px;
+}
+
+#outOfSearches {
+	padding-left: 50px;
+}
+
