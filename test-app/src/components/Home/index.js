@@ -6,7 +6,7 @@ import './index.css';
 
 const HomePage = () => (
   <div>
-    <h1 id="homePage">Home Page</h1>
+    <h1 id="homePage">Search for Articles</h1>
 	 <ArticleGetter/>
   </div>
 );

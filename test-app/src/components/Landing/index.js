@@ -4,7 +4,7 @@ import './index.css';
 
 const Landing = () => (
   <div>
-    <h1 id="landingDiv">Landing</h1>
+    <h1 id="landingDiv">PlexNews</h1>
 	 <ArticleGetter/>
   </div>
 );
